@@ -39,21 +39,63 @@
   var shareIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>';
   var plusIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#203746" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
 
+  var isSamsung = /SamsungBrowser/i.test(ua);
+  var isEdge = /Edg(e|A|iOS)?\//i.test(ua);
+  var isFirefox = /Firefox|FxiOS/i.test(ua);
+  var isInApp = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|TikTok|Twitter|LinkedInApp|MicroMessenger/i.test(ua);
+  var isChromeLike = /Chrome|CriOS/i.test(ua) && !isEdge && !isSamsung;
+  var isSafari = /Safari/i.test(ua) && !/Chrome|CriOS|Chromium|Edg|FxiOS|SamsungBrowser|Android/i.test(ua);
+  var NAME = (window.PWA_NAME || 'ASPM');
+
   function steps() {
+    var A = 'Añadir a pantalla de inicio';
+    if (isInApp) return { can: false, list: [
+      'Estás en el navegador interno de otra app, que no permite instalar.',
+      'Toca el menú <b>⋯</b> o <b>⋮</b> y elige <b>Abrir en Safari</b> / <b>Abrir en el navegador</b>.',
+      'Después sigue los pasos de instalación desde ahí.'] };
     if (isIOS) return { can: false, list: [
-      'Abre esta página en <b>Safari</b> (no en el navegador de Instagram, WhatsApp, etc.).',
-      'Toca el botón <b>Compartir</b> ' + shareIcon + ' (abajo en el centro, o arriba a la derecha en iPad).',
-      'Desliza hacia abajo y toca <b>Añadir a pantalla de inicio</b> ' + plusIcon + '.',
-      'Toca <b>Añadir</b>. ¡Listo! El icono de ASPM aparecerá en tu pantalla de inicio.'] };
-    if (isAndroid) return { can: !!deferred, list: [
-      'Pulsa el botón <b>Instalar ahora</b> de abajo y confirma <b>Instalar</b>.',
-      'Si no aparece: abre el menú <b>⋮</b> de Chrome y elige <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b>.',
-      'Encontrarás el icono de ASPM en tu pantalla de inicio.'] };
-    return { can: !!deferred, list: [
-      'Pulsa el botón <b>Instalar ahora</b> de abajo y confirma <b>Instalar</b> en la ventana del navegador.',
-      'Si no aparece: en Chrome/Edge busca el icono de instalar ⊕ en la barra de direcciones, o menú <b>⋮</b> → <b>Instalar ASPM</b>.',
-      'En Safari (Mac): menú <b>Archivo</b> → <b>Añadir al Dock</b>.',
-      'ASPM se abrirá como una aplicación propia.'] };
+      isSafari ? 'Estás en <b>Safari</b>: perfecto.' : 'Mejor con <b>Safari</b>; en Chrome/Edge también funciona desde el menú Compartir.',
+      'Toca el botón <b>Compartir</b> ' + shareIcon + ' (abajo en el centro; arriba a la derecha en iPad).',
+      'Desliza hacia abajo y toca <b>' + A + '</b> ' + plusIcon + '.',
+      'Toca <b>Añadir</b>. El icono de ' + NAME + ' aparecerá en tu pantalla de inicio.'] };
+    if (isAndroid) {
+      if (deferred) return { can: true, list: [
+        'Pulsa <b>Instalar ahora</b> y confirma <b>Instalar</b>.',
+        'Encontrarás el icono de ' + NAME + ' en tu pantalla de inicio.'] };
+      if (isSamsung) return { can: false, list: [
+        'Abre el menú <b>☰</b> de Samsung Internet.',
+        'Toca <b>Añadir página a</b> → <b>Pantalla de inicio</b> (o <b>Instalar app</b> si aparece).',
+        'Confirma con <b>Añadir</b>.'] };
+      if (isFirefox) return { can: false, list: [
+        'Abre el menú <b>⋮</b> de Firefox.',
+        'Toca <b>Instalar</b> (o <b>Añadir a pantalla de inicio</b>).',
+        'Confirma con <b>Añadir</b>.'] };
+      return { can: false, list: [
+        'Abre el menú <b>⋮</b> de tu navegador.',
+        'Toca <b>Instalar aplicación</b> o <b>' + A + '</b>.',
+        'Confirma con <b>Instalar</b>.'] };
+    }
+    // Escritorio
+    if (deferred) return { can: true, list: [
+      'Pulsa <b>Instalar ahora</b>.',
+      'En la ventana del navegador pulsa <b>Instalar</b> (o <b>Next</b> y luego <b>Install</b>).',
+      NAME + ' se abrirá como una aplicación en su propia ventana.'] };
+    if (isSafari) return { can: false, list: [
+      'En la barra de menús de Safari abre <b>Archivo</b> → <b>Añadir al Dock…</b> (o botón <b>Compartir</b> ' + shareIcon + ' → <b>Añadir al Dock</b>).',
+      'Confirma con <b>Añadir</b>.',
+      NAME + ' aparecerá en tu Dock como una app (requiere macOS Sonoma o posterior).'] };
+    if (isEdge) return { can: false, list: [
+      'Abre el menú <b>⋯</b> de Edge → <b>Aplicaciones</b> → <b>Instalar este sitio como una aplicación</b>.',
+      'Confirma con <b>Instalar</b>.'] };
+    if (isChromeLike) return { can: false, list: [
+      'Busca el icono de instalar ⊕ al final de la barra de direcciones, o abre el menú <b>⋮</b> → <b>Transmitir, guardar y compartir</b> → <b>Instalar página como aplicación</b>.',
+      'Confirma con <b>Instalar</b>.'] };
+    if (isFirefox) return { can: false, list: [
+      'Firefox de escritorio no puede instalar webs como aplicaciones.',
+      'Abre esta página en <b>Chrome</b>, <b>Edge</b> o <b>Safari</b> y sigue los pasos allí.'] };
+    return { can: false, list: [
+      'Abre el menú de tu navegador y busca <b>Instalar aplicación</b> o <b>Añadir al Dock</b>.',
+      'Si no aparece, usa Chrome, Edge o Safari.'] };
   }
 
   var ov;
@@ -62,8 +104,8 @@
     close(); hideBanner();
     var s = steps();
     ov = document.createElement('div'); ov.className = 'aspm-i-ov';
-    ov.innerHTML = '<div class="aspm-i-box" role="dialog" aria-modal="true" aria-label="Instalar ASPM">' +
-      '<h3>Instala la app de ASPM</h3><p class="s">Acceso directo desde tu pantalla de inicio, sin ocupar espacio.</p>' +
+    ov.innerHTML = '<div class="aspm-i-box" role="dialog" aria-modal="true" aria-label="Instalar app">' +
+      '<h3>Instala la app de ' + NAME + '</h3>'+'<p class="s">Acceso directo desde tu pantalla de inicio, sin ocupar espacio.</p>' +
       '<ol>' + s.list.map(function (x) { return '<li><span>' + x + '</span></li>'; }).join('') + '</ol>' +
       '<div class="aspm-i-row">' + (s.can ? '<button class="aspm-i-btn" data-go>Instalar ahora</button>' : '') +
       '<button class="aspm-i-btn aspm-i-sec" data-cl>' + (s.can ? 'Ahora no' : 'Entendido') + '</button></div></div>';
@@ -80,7 +122,7 @@
   function showBanner() {
     try { if (Number(localStorage.getItem(KEY)) > Date.now()) return; } catch (e) {}
     banner = document.createElement('div'); banner.className = 'aspm-i-banner';
-    banner.innerHTML = '<img src="icons/icon-192-v2.png" alt=""><div class="t"><b>Instala la app de ASPM</b>Añádela a tu pantalla de inicio</div>' +
+    banner.innerHTML = '<img src="icons/icon-192-v2.png" alt=""><div class="t"><b>Instala la app de ' + NAME + '</b>Añádela a tu pantalla de inicio</div>' +
       '<button class="aspm-i-btn" data-open>Cómo instalar</button><button class="aspm-i-x" aria-label="Cerrar" data-x>×</button>';
     banner.addEventListener('click', function (e) {
       if (e.target.hasAttribute('data-open')) open();

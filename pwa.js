@@ -86,10 +86,10 @@
       NAME + ' aparecerá en tu Dock como una app (requiere macOS Sonoma o posterior).'] };
     if (isEdge) return { can: false, list: [
       'Abre el menú <b>⋯</b> de Edge → <b>Aplicaciones</b> → <b>Instalar este sitio como una aplicación</b>.',
-      'Confirma con <b>Instalar</b>.'] };
+      'Confirma con <b>Instalar</b>.', 'Si ya instalaste ' + NAME + ' antes, ábrela desde tus aplicaciones (chrome://apps) o desinstálala para poder instalarla de nuevo.'] };
     if (isChromeLike) return { can: false, list: [
       'Busca el icono de instalar ⊕ al final de la barra de direcciones, o abre el menú <b>⋮</b> → <b>Transmitir, guardar y compartir</b> → <b>Instalar página como aplicación</b>.',
-      'Confirma con <b>Instalar</b>.'] };
+      'Confirma con <b>Instalar</b>.', 'Si ya instalaste ' + NAME + ' antes, ábrela desde tus aplicaciones (chrome://apps) o desinstálala para poder instalarla de nuevo.'] };
     if (isFirefox) return { can: false, list: [
       'Firefox de escritorio no puede instalar webs como aplicaciones.',
       'Abre esta página en <b>Chrome</b>, <b>Edge</b> o <b>Safari</b> y sigue los pasos allí.'] };
@@ -129,6 +129,39 @@
       else if (e.target.hasAttribute('data-x')) { hideBanner(); dismiss(); }
     });
     document.body.appendChild(banner);
+  }
+
+
+  /* Diagnóstico: abre la web con ?pwa-debug al final de la dirección para ver qué falla */
+  function diagnose() {
+    var out = [], link = document.querySelector('link[rel=manifest]');
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') out.push('❌ La web no está en HTTPS (obligatorio para instalar)');
+    var ai = document.querySelector('link[rel=apple-touch-icon]');
+    out.push(ai ? '✅ apple-touch-icon presente en el HTML' : '❌ Falta apple-touch-icon');
+    if (!link) { out.push('❌ Falta <link rel="manifest">'); return Promise.resolve(out); }
+    return fetch(link.href, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) { out.push('❌ manifest no encontrado (' + r.status + '): ' + link.href); throw 0; }
+      out.push('✅ manifest OK'); return r.json();
+    }).then(function (m) {
+      return Promise.all((m.icons || []).map(function (i) {
+        var u = new URL(i.src, link.href).href;
+        return fetch(u, { cache: 'no-store' }).then(function (r) { out.push((r.ok ? '✅ ' : '❌ ') + 'icono ' + i.sizes + (r.ok ? ' OK' : ' NO CARGA (' + r.status + '): ' + u)); })
+          .catch(function () { out.push('❌ icono no carga: ' + u); });
+      }));
+    }).catch(function () {}).then(function () {
+      out.push(deferred ? '✅ El navegador permite instalar ahora' : '⚠️ El navegador NO ofrece instalar: si lo anterior está en ✅, la app ya está instalada en este navegador (desinstálala en chrome://apps y recarga)');
+      return out;
+    });
+  }
+  if (/pwa-debug/.test(location.search + location.hash)) {
+    window.addEventListener('load', function () { setTimeout(function () {
+      diagnose().then(function (o) {
+        var d = document.createElement('pre');
+        d.style.cssText = 'position:fixed;left:8px;right:8px;top:8px;z-index:100000;background:#111;color:#fff;padding:12px;border-radius:10px;font:12px/1.5 monospace;white-space:pre-wrap;max-height:70vh;overflow:auto';
+        d.textContent = 'DIAGNÓSTICO INSTALACIÓN\n' + o.join('\n') + '\n\n(toca para cerrar)';
+        d.onclick = function () { d.remove(); }; document.body.appendChild(d);
+      });
+    }, 3500); });
   }
 
   document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-install]'); if (t) { e.preventDefault(); open(); } });

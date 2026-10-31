@@ -2,7 +2,7 @@
   "name": "ASPM — Asociación del Secretariado Profesional de Madrid",
   "short_name": "ASPM",
   "description": "Asociación del Secretariado Profesional de Madrid",
-  "id": "/?v=2",
+  "id": "aspm-app-v3",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

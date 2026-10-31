@@ -1,42 +1,17 @@
 {
-  "id": "./",
   "name": "ASPM — Asociación del Secretariado Profesional de Madrid",
   "short_name": "ASPM",
-  "description": "Comunidad, formación, bolsa de empleo y Hub privado de la Asociación del Secretariado Profesional de Madrid.",
-  "lang": "es",
-  "dir": "ltr",
-  "start_url": "./index.html?source=pwa",
+  "description": "Asociación del Secretariado Profesional de Madrid",
+  "id": "/?v=2",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#F3E5D8",
+  "background_color": "#ffffff",
   "theme_color": "#203746",
-  "categories": ["business", "education", "social"],
+  "lang": "es",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
-  ],
-  "shortcuts": [
-    {
-      "name": "Área Privada",
-      "short_name": "Asociados",
-      "url": "asociados.html",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
-    },
-    {
-      "name": "Pregunta a Aspi",
-      "short_name": "Aspi",
-      "url": "aspi.html",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
-    },
-    {
-      "name": "Noticias",
-      "short_name": "Noticias",
-      "url": "noticias.html",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
-    }
+    { "src": "icons/icon-192-v2.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-v2.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512-v2.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

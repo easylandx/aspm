@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><rect width="512" height="512" rx="116" fill="#F3E5D8"/><g transform="translate(256 256) scale(0.96) translate(-256 -279.95)">
+  <defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#363C43"/><stop offset="1" stop-color="#2D3238"/></linearGradient></defs>
+  <path d="M31.00,472 L200.00,87.91 L312.00,87.91 L481.00,472 L403.00,472 L256,137.91 L109.00,472 Z" fill="url(#gA)"/>
+  <g transform="translate(256 472) scale(0.315) translate(-421.5 -598)">
+    <defs>
+      <clipPath id="cut"><rect x="0" y="0" width="900" height="598"/></clipPath>
+      <linearGradient id="gLeft" gradientUnits="userSpaceOnUse" x1="0" y1="116" x2="0" y2="598"><stop offset="0" stop-color="#A5080E"/><stop offset=".55" stop-color="#CF0A12"/><stop offset="1" stop-color="#D90E16"/></linearGradient>
+      <linearGradient id="gRight" gradientUnits="userSpaceOnUse" x1="0" y1="116" x2="0" y2="598"><stop offset="0" stop-color="#97060C"/><stop offset=".5" stop-color="#C40A11"/><stop offset="1" stop-color="#D70C14"/></linearGradient>
+      <linearGradient id="gD" gradientUnits="userSpaceOnUse" x1="232" y1="116" x2="420" y2="575"><stop offset="0" stop-color="#B00A10"/><stop offset=".3" stop-color="#D80E16"/><stop offset=".75" stop-color="#D00B13"/><stop offset="1" stop-color="#A30810"/></linearGradient>
+      <linearGradient id="gU" gradientUnits="userSpaceOnUse" x1="420" y1="575" x2="608" y2="116"><stop offset="0" stop-color="#9C070D"/><stop offset=".3" stop-color="#D00B13"/><stop offset="1" stop-color="#E4151C"/></linearGradient>
+    </defs>
+    <g clip-path="url(#cut)" fill="none" stroke-width="114" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M106,640 L232,172" stroke="url(#gLeft)" stroke-linecap="butt"/>
+      <path d="M734,640 L608,172" stroke="url(#gRight)" stroke-linecap="butt"/>
+      <circle cx="232" cy="172" r="57.0" fill="url(#gLeft)" stroke="none"/>
+      <circle cx="608" cy="172" r="57.0" fill="url(#gRight)" stroke="none"/>
+      <path d="M232,172 L420,519" stroke="url(#gD)"/>
+      <path d="M420,519 L608,172" stroke="url(#gU)"/>
+    </g></g></g></svg>

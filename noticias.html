@@ -790,7 +790,7 @@
           <li><a href="junta.html">Junta Directiva</a></li>
           <li><a href="#noticias">Noticias</a></li>
           <li><a href="asociados.html" class="btn btn-outline">Área Privada</a></li>
-          <li><a href="#asociate" class="btn btn-primary">Asóciate</a></li>
+          <li><a href="https://easylandx.github.io/aspm/index.html#unete" class="btn btn-primary">Asóciate</a></li>
         </ul>
       </nav>
     </div>
@@ -804,7 +804,7 @@
         <h1 id="hero-title">La red que impulsa a quienes sostienen la dirección</h1>
         <p>Potenciamos el valor estratégico del secretariado y la asistencia de dirección a través de la formación continua, el networking y el apoyo mutuo.</p>
         <div class="hero-cta">
-          <a href="#asociate" class="btn btn-primary">Asóciate</a>
+          <a href="https://easylandx.github.io/aspm/index.html#unete" class="btn btn-primary">Asóciate</a>
           <a href="#noticias" class="btn btn-outline" style="color: #fff; border-color: #fff;">Explorar Noticias</a>
         </div>
       </div>
@@ -873,20 +873,20 @@
     </div>
   </section>
 
-  <!-- Formulario Único: Solicitud de Socia / Contacto -->
-  <section id="asociate">
+  <!-- Formulario: Suscripción al newsletter de ASPM -->
+  <section id="newsletter">
     <div class="container">
       <div class="section-header">
-        <span class="tag">Comunidad</span>
-        <h2>Únete a ASPM</h2>
-        <p>Forma parte de la red profesional líder en Madrid. Rellena el formulario para solicitar tu incorporación o recibir más información.</p>
+        <span class="tag">Newsletter</span>
+        <h2>Suscríbete al newsletter de ASPM</h2>
+        <p>Recibe en tu correo las noticias, actividades y contenidos de interés para profesionales de la asistencia a la dirección y el secretariado.</p>
       </div>
 
       <div class="membership-form">
-        <h3>Solicitud de Información</h3>
-        <p class="form-intro">Déjanos tus datos y nos pondremos en contacto contigo a la mayor brevedad posible.</p>
+        <h3>Suscripción al newsletter de ASPM</h3>
+        <p class="form-intro">Introduce tus datos y te damos de alta en el newsletter de ASPM.</p>
         <form id="form-alta" action="https://formsubmit.co/secretaria@aspm.es" method="post">
-          <input type="hidden" name="_subject" value="Nueva solicitud de información - ASPM">
+          <input type="hidden" name="_subject" value="Nueva suscripción al newsletter - ASPM">
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_captcha" value="false">
           <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
@@ -918,13 +918,13 @@
           </div>
           <div class="form-check">
             <input type="checkbox" id="politica" name="politica" required>
-            <label for="politica">Acepto la política de privacidad y el tratamiento de mis datos para la gestión de la solicitud.</label>
+            <label for="politica">Acepto la política de privacidad y el tratamiento de mis datos para la gestión de mi suscripción al newsletter.</label>
           </div>
-          <button type="submit" class="btn btn-primary form-submit">Enviar solicitud de información</button>
+          <button type="submit" class="btn btn-primary form-submit">Suscribirme al newsletter</button>
           <p id="form-status" role="status" aria-live="polite" style="margin-top:1rem;font-weight:600;"></p>
         </form>
         <div class="newsletter-note">
-          Al enviar este formulario quedará registrada su solicitud para la asociación y suscripción a novedades.
+          Al enviar este formulario quedará registrada su suscripción al newsletter de ASPM. Podrá darse de baja en cualquier momento escribiendo a secretaria@aspm.es
         </div>
       </div>
     </div>
@@ -987,7 +987,7 @@
       var DEST = 'secretaria@aspm.es';
 
       function mailtoFallback(data) {
-        var body = 'Solicitud de Información\n\n' +
+        var body = 'Suscripción al newsletter de ASPM\n\n' +
           'Nombre: ' + data.nombre + '\n' +
           'Apellidos: ' + data.apellidos + '\n' +
           'Correo electrónico: ' + data.email + '\n' +
@@ -995,7 +995,7 @@
           'Empresa / Cargo: ' + (data.empresa || '-') + '\n' +
           'Mensaje: ' + (data.mensaje || '-') + '\n';
         window.location.href = 'mailto:' + DEST +
-          '?subject=' + encodeURIComponent('Solicitud de Información - ASPM') +
+          '?subject=' + encodeURIComponent('Suscripción al newsletter - ASPM') +
           '&body=' + encodeURIComponent(body);
       }
 
@@ -1014,13 +1014,13 @@
 
         btn.disabled = true;
         status.style.color = 'inherit';
-        status.textContent = 'Enviando solicitud…';
+        status.textContent = 'Enviando suscripción…';
 
         fetch('https://formsubmit.co/ajax/' + DEST, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify({
-            _subject: 'Nueva solicitud de información - ASPM',
+            _subject: 'Nueva suscripción al newsletter - ASPM',
             _template: 'table',
             _captcha: 'false',
             _replyto: data.email,
@@ -1037,7 +1037,7 @@
         .then(function (res) {
           if (res.success === 'true' || res.success === true) {
             status.style.color = '#2e7d32';
-            status.textContent = '¡Gracias! Tu solicitud se ha enviado correctamente. Nos pondremos en contacto contigo pronto.';
+            status.textContent = '¡Gracias! Tu suscripción al newsletter de ASPM se ha registrado correctamente.';
             form.reset();
           } else {
             throw new Error(res.message || 'Error');

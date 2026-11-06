@@ -2115,5 +2115,65 @@ body.article-open{overflow:hidden}
   });
 })();
 </script>
+<!-- Fix: #unete debe aterrizar en el formulario "Solicitud de Información" aunque las noticias carguen después -->
+<style>
+  #solicitud-socia { scroll-margin-top: 90px; }
+</style>
+<script>
+(function () {
+  var TARGET_ID = 'solicitud-socia';
+  var ALIASES = ['#unete', '#solicitud-socia'];
+  var ro = null, timer = null, userMoved = false;
+
+  function headerOffset() {
+    var h = document.querySelector('header');
+    return (h ? h.getBoundingClientRect().height : 0) + 16;
+  }
+
+  function align() {
+    if (userMoved) return;
+    var el = document.getElementById(TARGET_ID);
+    if (!el) return;
+    var root = document.documentElement;
+    var prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+    root.style.scrollBehavior = prev;
+  }
+
+  function stopWatching() {
+    if (ro) { ro.disconnect(); ro = null; }
+    clearTimeout(timer);
+  }
+
+  function start() {
+    if (ALIASES.indexOf(location.hash) === -1) return;
+    stopWatching();
+    userMoved = false;
+    align();
+    if ('ResizeObserver' in window) {
+      ro = new ResizeObserver(align);
+      ro.observe(document.body);
+    }
+    timer = setTimeout(stopWatching, 5000);
+  }
+
+  ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
+    window.addEventListener(ev, function () { userMoved = true; stopWatching(); }, { passive: true });
+  });
+
+  window.addEventListener('load', start);
+  window.addEventListener('hashchange', start);
+
+  // Clic en botones internos (#unete): mismo comportamiento sin depender del salto nativo
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#unete"]');
+    if (!a) return;
+    e.preventDefault();
+    if (location.hash !== '#unete') history.pushState(null, '', '#unete');
+    start();
+  });
+})();
+</script>
 </body>
 </html>

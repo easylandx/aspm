@@ -1459,7 +1459,7 @@ body.article-open{overflow:hidden}
       <div id="solicitud-socia" class="membership-form">
         <h3>Solicitud de Información</h3>
         <p class="form-intro">
-          Completa tus datos y nos pondremos en contacto contigo para informarte sobre el proceso de incorporación a ASPM.
+          Completa tus datos y nos ponemos en contacto contigo para informarte sobre el proceso de incorporación a ASPM.
         </p>
 
         <form id="form-solicitud" action="https://formsubmit.co/secretaria@aspm.es" method="POST" novalidate>
@@ -1477,7 +1477,7 @@ body.article-open{overflow:hidden}
             </div>
 
             <div class="form-field">
-              <label for="email">Email *</label>
+              <label for="email">Correo Electrónico *</label>
               <input type="email" id="email" name="email" autocomplete="email" required>
             </div>
 
@@ -1492,14 +1492,19 @@ body.article-open{overflow:hidden}
             </div>
 
             <div class="form-field full">
-              <label for="mensaje">Cuéntanos brevemente sobre ti</label>
-              <textarea id="mensaje" name="mensaje" placeholder="Tu experiencia, puesto actual o cualquier información que quieras compartir."></textarea>
+              <label for="mensaje">Mensaje o Comentarios</label>
+              <textarea id="mensaje" name="mensaje"></textarea>
             </div>
           </div>
 
           <label class="form-check">
-            <input type="checkbox" name="newsletter" value="si" checked>
-            <span>Quiero recibir también el <strong>newsletter mensual de ASPM</strong> con noticias, actividades y contenidos de interés para profesionales de la asistencia a la dirección.</span>
+            <input type="checkbox" name="newsletter" value="si">
+            <span>Quiero recibir también el <strong>newsletter mensual de ASPM.</strong></span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="privacidad" name="privacidad" value="si" required>
+            <span>Acepto la política de privacidad y el tratamiento de mis datos para la solicitud de información / gestión de mi suscripción al newsletter. *</span>
           </label>
 
           <button type="submit" class="btn btn-primary form-submit">Enviar solicitud de información</button>
@@ -1797,8 +1802,12 @@ body.article-open{overflow:hidden}
         status.textContent = msg;
       }
 
+      form.elements['privacidad'].addEventListener('change', function () { this.setCustomValidity(''); });
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        var priv = form.elements['privacidad'];
+        priv.setCustomValidity(priv.checked ? '' : 'Debes aceptar la política de privacidad para enviar la solicitud.');
         if (!form.checkValidity()) { form.reportValidity(); return; }
         if (form.elements['_honey'].value) return; // bot
 
@@ -1810,7 +1819,8 @@ body.article-open{overflow:hidden}
           'Teléfono': f['telefono'].value.trim() || '—',
           'Empresa / Organización': f['empresa'].value.trim() || '—',
           'Sobre la persona': f['mensaje'].value.trim() || '—',
-          'Newsletter mensual': f['newsletter'].checked ? 'Sí' : 'No'
+          'Newsletter mensual': f['newsletter'].checked ? 'Sí' : 'No',
+          'Política de privacidad aceptada': f['privacidad'].checked ? 'Sí' : 'No'
         };
 
         var payload = Object.assign({}, datos, {
@@ -1833,7 +1843,6 @@ body.article-open{overflow:hidden}
         .then(function (res) {
           if (res.ok && String(res.j.success) === 'true') {
             form.reset();
-            f['newsletter'].checked = true;
             show('¡Gracias! Hemos recibido tu solicitud y nos pondremos en contacto contigo muy pronto.', true);
           } else {
             throw new Error('envio_fallido');

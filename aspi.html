@@ -315,6 +315,35 @@ body.tour-open{overflow:hidden}
 .g-opt.picked{border-color:var(--accent);background:rgba(201,8,18,.07)}
 .day-res{margin-top:.7rem;padding:.65rem .8rem;border-radius:10px;background:rgba(32,57,74,.06);border-left:4px solid var(--primary)}
 .day-aspm{margin-top:.55rem;padding:.65rem .8rem;border-radius:10px;background:rgba(201,8,18,.07);border:1px solid rgba(201,8,18,.28)}
+
+/* ===== Aspi · calculadora «Tu valor como asistente» ===== */
+.g-opt.sel{border-color:var(--accent);background:rgba(201,8,18,.07)}
+.g-opt.sel b::before{content:"✓ ";color:var(--accent)}
+.calc-step{font-size:.78rem;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.04em}
+.calc-langs{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.5rem}
+.calc-langs .chip.sel{border-color:var(--accent);background:rgba(201,8,18,.09);color:#14232C;font-weight:700}
+.calc-langs .chip.sel::before{content:"✓ ";color:var(--accent)}
+.calc-badge{display:inline-block;padding:.3rem .8rem;border-radius:99px;background:var(--primary);color:#fff;font-weight:700;font-size:.85rem}
+.calc-scores{display:flex;align-items:center;justify-content:center;gap:.7rem;margin:.8rem 0 .4rem;flex-wrap:wrap}
+.calc-sc{flex:1 1 120px;max-width:200px;text-align:center;padding:.6rem .5rem;border-radius:14px;background:rgba(32,57,74,.07);border:1px solid var(--border)}
+.calc-sc small{display:block;font-size:.78rem;font-weight:700;color:var(--text-muted);line-height:1.25}
+.calc-sc b.calc-n{display:block;font-size:2.3rem;line-height:1.1;font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums}
+.calc-sc-aspm{background:rgba(201,8,18,.08);border-color:rgba(201,8,18,.35)}
+.calc-sc-aspm b.calc-n{color:var(--accent)}
+.calc-plus{display:inline-block;margin-top:.1rem;padding:.05rem .5rem;border-radius:99px;background:var(--accent);color:#fff;font-weight:800;font-size:.8rem}
+.calc-arrow{font-size:1.5rem;font-weight:800;color:var(--accent)}
+.calc-dims{margin-top:.6rem}
+.calc-row{margin-top:.55rem}
+.calc-row-top{display:flex;justify-content:space-between;gap:.5rem;font-size:.88rem;font-weight:700;color:#14232C}
+.calc-row-top span:last-child{font-variant-numeric:tabular-nums;color:var(--text-muted);font-weight:600;white-space:nowrap}
+.calc-track{position:relative;height:12px;border-radius:99px;background:rgba(32,57,74,.1);overflow:hidden;margin-top:.2rem}
+.calc-track i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.calc-track .w{background:rgba(201,8,18,.4)}
+.calc-track .n{background:var(--primary)}
+.calc-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.6rem;font-size:.8rem;color:var(--text-muted);font-weight:600}
+.calc-legend span::before{content:"";display:inline-block;width:.7rem;height:.7rem;border-radius:3px;margin-right:.35rem;vertical-align:-1px;background:var(--primary)}
+.calc-legend span+span::before{background:rgba(201,8,18,.55)}
+@media(prefers-reduced-motion:reduce){.calc-track i{transition:none}}
 </style>
 
   <!-- PWA: app instalable -->
@@ -563,7 +592,7 @@ const KB=[
  a:`🔐 Los nombres de las personas de contacto, los correos y los teléfonos de cada empresa colaboradora están reunidos en el <b>Área Privada</b>, el espacio exclusivo para socias y socios, con buscador para encontrar a quien necesites en un momento. Entra aquí: ${L(PRIV,"Área Privada")}. Si todavía no eres socia, ¡te damos la bienvenida! Pide información en <a href="index.html#unete">Asóciate</a>.`,
  c:["¿Cómo me hago socia?","¿Qué hay en el Área Privada?"]},
 ];
-const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 60 segundos","🧭 Hazme el tour","☀️ Un día en la vida de una asistente"];
+const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 60 segundos","🧭 Hazme el tour","☀️ Un día en la vida de una asistente","💎 Calcula tu valor como asistente"];
 // ====== MOTOR ======
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ ]/g," ");
 const STOP=new Set("el la los las un una de del en y a que es son por para con me te se mi tu como cual cuales hay al lo su sus o".split(" "));
@@ -614,6 +643,7 @@ function handleSpecial(t){
     if(/^(cancelar|salir|olvidalo|dejalo|no quiero)$/.test(n)){flow=null;botSay('Sin problema, lo dejamos aquí 😊 ¿Te ayudo con algo más?',[SUG[0],SUG[1],SUG[7],SUG[8]]);return true}
     flow(t);return true;
   }
+  if(/valor como asistente|calculadora|calcula\w* (mi|tu) valor|cuanto valgo|mi valor/.test(n)){startCalc();return true}
   if(/dia en la vida|jornada (de|en)|un dia de una/.test(n)){startDay();return true}
   if(/\btour\b|visita guiada|guia de visita|recorr\w* la web/.test(n)){startTour();return true}
   if(/\btarjeta\b|\bcredencial\b/.test(n)&&!/credito|debito|visa|bancaria/.test(n)){startCard();return true}
@@ -1007,7 +1037,121 @@ function dayScene(n){
 }
 
 function dayEnd(){
-  botSay(`🌙 <b>19:00.</b> Cierras el portátil: agenda cerrada, viaje reservado y consejo organizado. Una jornada así se lleva mucho mejor <b>en comunidad</b>: con formación, ventajas y compañeras que te entienden.<div class="btn-row"><a class="btn btn-primary" href="${FORM}">Quiero asociarme</a></div>`,['¿Qué beneficios hay?','¿Qué descuentos hay para socias?',SUG[10],SUG[9]]);
+  botSay(`🌙 <b>19:00.</b> Cierras el portátil: agenda cerrada, viaje reservado y consejo organizado. Una jornada así se lleva mucho mejor <b>en comunidad</b>: con formación, ventajas y compañeras que te entienden.<div class="btn-row"><a class="btn btn-primary" href="${FORM}">Quiero asociarme</a></div>`,['¿Qué beneficios hay?','¿Qué descuentos hay para socias?',SUG[11],SUG[10]]);
+}
+
+// ====== ASPI · CALCULADORA «TU VALOR COMO ASISTENTE» ======
+const CALC_EXP=[
+  {t:'Menos de 2 años',s:20,r:0,w:'menos de 2 años de experiencia'},
+  {t:'De 2 a 4 años',s:40,r:1,w:'entre 2 y 4 años de experiencia'},
+  {t:'De 5 a 9 años',s:62,r:2,w:'entre 5 y 9 años de experiencia'},
+  {t:'De 10 a 19 años',s:82,r:3,w:'entre 10 y 19 años de experiencia'},
+  {t:'20 años o más',s:95,r:4,w:'más de 20 años de experiencia'}
+];
+const CALC_LANG=['Inglés','Francés','Alemán','Italiano','Portugués','Chino','Árabe','Ruso'];
+const CALC_SEC=[
+  {t:'Multinacional / gran empresa',s:72,tip:'Como socia conectas con asistentes de <b>grandes empresas e internacionales</b> y entras en cenas de gala y eventos corporativos con networking exclusivo.'},
+  {t:'Hotelería y turismo',s:68,tip:'ASPM tiene alianzas con cadenas hoteleras (Meliá, NH Collection, Paradores, Barceló…) y plataformas de viaje como Iberia o Renfe: tu sector está muy presente en la red.'},
+  {t:'Tecnología y startups',s:74,tip:'Entre los socios tecnológicos hay nombres como <b>Microsoft, Google, Telefónica, Samsung, Amazon e IBM</b>, y la formación incluye talleres de herramientas digitales.'},
+  {t:'Eventos y MICE',s:70,tip:'La red incluye espacios y empresas de eventos y MICE (Calandria, SOMOS Experiences, SPmice, Grupo Eneldo…), ideales para ampliar proveedores y contactos.'},
+  {t:'Legal, finanzas y consultoría',s:74,tip:'Los eventos y cenas de la asociación te dan <b>networking exclusivo</b>, y la Bolsa de Trabajo tiene contacto con el área Top Assistants de Adecco.'},
+  {t:'Sector público, salud o educación',s:62,tip:'El Hub de Empleo y Talento reúne la guía del <b>Certificado de Profesionalidad</b> y la vía PAC para acreditar oficialmente tu experiencia.'},
+  {t:'Otro sector',s:64,tip:'La Bolsa de Empleo (con canal de WhatsApp) y el contacto con Adecco Top Assistants te dan visibilidad ante empresas de cualquier sector.'}
+];
+const clamp100=n=>Math.max(0,Math.min(100,Math.round(n)));
+function calcLevel(s){return s<40?'🌱 Asistente en despegue':s<60?'💪 Asistente sólida':s<75?'⭐ Asistente de referencia':'👑 Mano derecha estratégica'}
+
+function startCalc(){
+  botSay('💎 <b>Tu valor como asistente.</b> Te hago 3 preguntas rápidas (años de experiencia, idiomas y sector) y te muestro tu perfil y cómo crecería dentro de la red de ASPM. Es una estimación orientativa y no guardo ningún dato.')
+    .then(()=>setTimeout(()=>calcStep1({}),900));
+}
+
+function calcCard(step,title,body){
+  return add(`<div class="calc-step">Paso ${step} de 3</div><p class="g-brief"><b>${title}</b></p>${body}`,'bot gamemsg');
+}
+
+function calcStep1(st){
+  const d=calcCard(1,'¿Cuántos años de experiencia tienes como asistente?','<div class="calc-opts"></div>');
+  const box=d.querySelector('.calc-opts');
+  CALC_EXP.forEach(o=>{
+    const b=document.createElement('button');b.type='button';b.className='g-opt';b.innerHTML='<b>'+o.t+'</b>';
+    b.onclick=()=>{
+      box.querySelectorAll('.g-opt').forEach(x=>x.disabled=true);b.classList.add('picked');
+      st.exp=o;setTimeout(()=>calcStep2(st),350);
+    };
+    box.appendChild(b);
+  });
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function calcStep2(st){
+  const d=calcCard(2,'¿Qué idiomas manejas además del español?','<div class="g-note">Marca todos los que uses en el trabajo (nivel profesional):</div><div class="calc-langs"></div><div class="btn-row"><button type="button" class="btn btn-primary calc-go">Continuar ▶</button></div>');
+  const box=d.querySelector('.calc-langs'),sel=new Set();
+  CALC_LANG.forEach(l=>{
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=l;b.setAttribute('aria-pressed','false');
+    b.onclick=()=>{const on=!sel.has(l);on?sel.add(l):sel.delete(l);b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on)};
+    box.appendChild(b);
+  });
+  const go=d.querySelector('.calc-go');
+  const sync=()=>{go.textContent=sel.size?'Continuar ▶':'Solo español · continuar ▶'};
+  box.addEventListener('click',sync);sync();
+  go.onclick=()=>{
+    go.disabled=true;box.querySelectorAll('.chip').forEach(x=>x.disabled=true);
+    st.langs=[...sel];setTimeout(()=>calcStep3(st),350);
+  };
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function calcStep3(st){
+  const d=calcCard(3,'¿En qué sector trabajas?','<div class="calc-opts"></div>');
+  const box=d.querySelector('.calc-opts');
+  CALC_SEC.forEach(o=>{
+    const b=document.createElement('button');b.type='button';b.className='g-opt';b.innerHTML='<b>'+o.t+'</b>';
+    b.onclick=()=>{
+      box.querySelectorAll('.g-opt').forEach(x=>x.disabled=true);b.classList.add('picked');
+      st.sec=o;setTimeout(()=>calcResult(st),400);
+    };
+    box.appendChild(b);
+  });
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function calcScores(st){
+  const e=st.exp,r=e.r,hasEn=st.langs.includes('Inglés'),others=st.langs.filter(l=>l!=='Inglés').length;
+  const idi=clamp100(20+(hasEn?40:0)+Math.min(others,3)*20);
+  const now={exp:e.s,idi:idi,esp:st.sec.s,red:18+r*7};
+  const aspm={exp:e.s,idi:idi,esp:clamp100(st.sec.s+14),red:clamp100(88+r*2)};
+  const tot=o=>clamp100(.30*o.exp+.25*o.idi+.20*o.esp+.25*o.red);
+  return {now,aspm,tn:tot(now),ta:tot(aspm)};
+}
+
+function calcResult(st){
+  const sc=calcScores(st),n=sc.now,a=sc.aspm;
+  const dims=[['Experiencia','exp'],['Idiomas','idi'],['Especialización','esp'],['Red y visibilidad','red']];
+  const own=dims.filter(x=>x[1]!=='red').sort((p,q)=>n[q[1]]-n[p[1]])[0];
+  const langTxt=st.langs.length?st.langs.join(', '):'solo español';
+  const rows=dims.map(([lab,k])=>`<div class="calc-row"><div class="calc-row-top"><span>${lab}</span><span>${n[k]}${a[k]!==n[k]?' → '+a[k]:''}</span></div><div class="calc-track" role="img" aria-label="${lab}: ${n[k]} hoy, ${a[k]} con la red de ASPM"><i class="w" data-w="${a[k]}"></i><i class="n" data-w="${n[k]}"></i></div></div>`).join('');
+  const plus=sc.ta-sc.tn;
+  const html=`<div class="calc-badge">${calcLevel(sc.tn)}</div>
+<p class="g-brief" style="margin-top:.5rem">Tu perfil: asistente con <b>${st.exp.w}</b>, idiomas (<b>${esc(langTxt)}</b>) y sector <b>${esc(st.sec.t.toLowerCase())}</b>. Tu punto más fuerte hoy es <b>${own[0].toLowerCase()}</b>.</p>
+<div class="calc-scores"><div class="calc-sc"><small>Tu valor hoy</small><b class="calc-n" data-to="${sc.tn}">0</b></div><div class="calc-arrow" aria-hidden="true">→</div><div class="calc-sc calc-sc-aspm"><small>Con la red de ASPM</small><b class="calc-n" data-to="${sc.ta}">0</b><span class="calc-plus">+${plus}</span></div></div>
+<div class="calc-dims">${rows}</div>
+<div class="calc-legend"><span>Hoy</span><span>Con la red de ASPM</span></div>
+<div class="day-res">Lo que más crece es tu <b>red y visibilidad</b> (contactos, empresas aliadas, bolsa de empleo) y tu <b>especialización</b> (formación continua). Tu experiencia y tus idiomas los pones tú: ¡y ya cuentan!</div>
+<div class="day-aspm">${st.sec.tip}</div>
+<div class="share-note">Estimación orientativa y divertida: no es una valoración salarial ni oficial, ni una promesa de resultados.</div>
+<div class="btn-row"><a class="btn btn-primary" href="${FORM}">Quiero asociarme</a><button type="button" class="chip calc-again">🔄 Repetir</button></div>`;
+  const d=add(html,'bot gamemsg');
+  d.querySelector('.calc-again').onclick=()=>ask('Calcula tu valor como asistente');
+  chat.scrollTop=chat.scrollHeight;
+  // animación de barras y contadores
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{d.querySelectorAll('.calc-track i').forEach(i=>i.style.width=i.dataset.w+'%')}));
+  d.querySelectorAll('.calc-n').forEach(el=>{
+    const to=+el.dataset.to;if(reduce){el.textContent=to;return}
+    const t0=performance.now(),dur=900;
+    (function tick(t){const p=Math.min(1,(t-t0)/dur);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1&&d.isConnected)requestAnimationFrame(tick);else el.textContent=to})(t0);
+  });
 }
 
 document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();ask(q.value)});

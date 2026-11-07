@@ -724,8 +724,8 @@ function endGame(d,tm,ok,msg,retry){
   d.querySelectorAll('.g-item,.g-opt,.g-undo').forEach(b=>b.disabled=true);
   const foot=d.querySelector('.g-foot');
   if(ok){
-    let s=3;
-    foot.innerHTML=`<div class="g-result ok">🏆 <b>¡Reto superado en ${tm.secs()} s!</b> ${msg||''}<br>Te llevo al formulario de solicitud de información en <b class="cd">3</b>… <a href="${FORM}">Ir ahora</a> · <button type="button" class="chip stay">Quedarme aquí</button></div>`;
+    let s=10;
+    foot.innerHTML=`<div class="g-result ok">🏆 <b>¡Reto superado en ${tm.secs()} s!</b> ${msg||''}<br>Te llevo al formulario de solicitud de información en <b class="cd">10</b>… <a href="${FORM}">Ir ahora</a> · <button type="button" class="chip stay">Quedarme aquí</button></div>`;
     const cd=foot.querySelector('.cd'),iv=setInterval(()=>{s--;if(s<=0){clearInterval(iv);location.href=FORM}else cd.textContent=s},1000);
     foot.querySelector('.stay').onclick=()=>{clearInterval(iv);foot.querySelector('.g-result').innerHTML=`🏆 ¡Genial! Cuando quieras, aquí tienes el <a href="${FORM}">formulario de solicitud de información</a>.`};
   }else{

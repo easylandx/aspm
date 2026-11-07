@@ -309,6 +309,12 @@ body.tour-open{overflow:hidden}
 .tour-bar{height:4px;border-radius:99px;background:rgba(32,57,74,.12);overflow:hidden;margin-top:.6rem}
 .tour-bar i{display:block;height:100%;width:0;background:var(--accent)}
 @media(max-width:520px){.tour-av{width:48px;height:48px}.tour-guide{padding:.65rem .7rem;font-size:.9rem}}
+/* ===== Aspi · el día en la vida de una asistente ===== */
+.day-time{font-weight:800;color:var(--accent);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.day-opts .g-opt:disabled:not(.picked){opacity:.55}
+.g-opt.picked{border-color:var(--accent);background:rgba(201,8,18,.07)}
+.day-res{margin-top:.7rem;padding:.65rem .8rem;border-radius:10px;background:rgba(32,57,74,.06);border-left:4px solid var(--primary)}
+.day-aspm{margin-top:.55rem;padding:.65rem .8rem;border-radius:10px;background:rgba(201,8,18,.07);border:1px solid rgba(201,8,18,.28)}
 </style>
 
   <!-- PWA: app instalable -->
@@ -557,7 +563,7 @@ const KB=[
  a:`🔐 Los nombres de las personas de contacto, los correos y los teléfonos de cada empresa colaboradora están reunidos en el <b>Área Privada</b>, el espacio exclusivo para socias y socios, con buscador para encontrar a quien necesites en un momento. Entra aquí: ${L(PRIV,"Área Privada")}. Si todavía no eres socia, ¡te damos la bienvenida! Pide información en <a href="index.html#unete">Asóciate</a>.`,
  c:["¿Cómo me hago socia?","¿Qué hay en el Área Privada?"]},
 ];
-const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 60 segundos","🧭 Hazme el tour"];
+const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 60 segundos","🧭 Hazme el tour","☀️ Un día en la vida de una asistente"];
 // ====== MOTOR ======
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ ]/g," ");
 const STOP=new Set("el la los las un una de del en y a que es son por para con me te se mi tu como cual cuales hay al lo su sus o".split(" "));
@@ -608,6 +614,7 @@ function handleSpecial(t){
     if(/^(cancelar|salir|olvidalo|dejalo|no quiero)$/.test(n)){flow=null;botSay('Sin problema, lo dejamos aquí 😊 ¿Te ayudo con algo más?',[SUG[0],SUG[1],SUG[7],SUG[8]]);return true}
     flow(t);return true;
   }
+  if(/dia en la vida|jornada (de|en)|un dia de una/.test(n)){startDay();return true}
   if(/\btour\b|visita guiada|guia de visita|recorr\w* la web/.test(n)){startTour();return true}
   if(/\btarjeta\b|\bcredencial\b/.test(n)&&!/credito|debito|visa|bancaria/.test(n)){startCard();return true}
   if(/ordena.*agenda|agenda.*directivo/.test(n)){startAgenda();return true}
@@ -946,6 +953,61 @@ function runTour(){
   bPause.onclick=()=>{paused=!paused;bPause.textContent=paused?'▶ Seguir':'⏸ Pausar';if(paused){clearTimeout(timer);bar.style.transition='none'}else go(i)};
   fr.addEventListener('load',()=>setTimeout(build,700));
   setTimeout(()=>{if(!closed&&!steps.length){try{if(!fr.contentDocument)fail()}catch(e){fail()}}},8000);
+}
+
+// ---------- EL DÍA EN LA VIDA DE UNA ASISTENTE ----------
+const DAY=[
+  {time:'08:30',title:'La agenda',
+   text:'Llegas a la oficina y tu directivo te escribe: la reunión de las 10:00 se adelanta a las 9:00, el comité de las 11:00 choca con la llamada a Tokio y quiere comer con un cliente a las 14:00 «en un sitio especial».',
+   opts:[
+    {t:'Priorizo: muevo la llamada de Tokio y confirmo la comida',r:'Buen criterio: lo que no se puede mover manda, y avisas a todos antes de las 9:00. Decidir qué va primero ya es media agenda resuelta.'},
+    {t:'Le pregunto qué es lo más importante del día antes de tocar nada',r:'Preguntar antes de reorganizar evita rehacer la agenda dos veces. El criterio de la asistente es parte del trabajo.'},
+    {t:'Lo acepto todo y ya veré cómo encajarlo',r:'Funciona… hasta las 11:00. Cuando la agenda se te va de las manos, lo mejor es no ir sola.'}],
+   aspm:'🎓 <b>Cómo ayuda ASPM:</b> con <b>talleres</b> de gestión del tiempo, herramientas digitales y comunicación asertiva, y con una <b>comunidad de socias</b> que ya han pasado por lo mismo: compañerismo y apoyo mutuo para resolver los retos del día a día.'},
+  {time:'12:15',title:'El viaje de última hora',
+   text:'Tu directivo tiene que estar mañana a las 9:00 en Barcelona… y te lo dice ahora. Hace falta transporte, un hotel cerca de la reunión y, si es posible, coche al llegar.',
+   opts:[
+    {t:'Comparo trenes y vuelos y reservo el que mejor encaje',r:'Rápido y práctico: con horarios claros y margen para imprevistos, el viaje queda cerrado antes de comer.'},
+    {t:'Llamo a la agencia de viajes corporativa',r:'Delegar en quien lo hace cada día ahorra tiempo, sobre todo cuando hay que combinar transporte, hotel y coche.'},
+    {t:'Empiezo por el hotel y luego encajo el transporte',r:'Buen enfoque si la reunión es en una zona concreta: el hotel cerca marca el resto de decisiones.'}],
+   aspm:'✈️ <b>Cómo ayuda ASPM:</b> en <b>Alianzas y Ventajas</b> hay socios colaboradores de viajes y transporte (Renfe, Iberia, PANGEA The Travel Store, BizAway, Europcar con tarifas preferentes) y ventajas en hoteles como NH · Minor Hotels, Meliá o H10. Los contactos de cada empresa están en el Área Privada.'},
+  {time:'16:30',title:'La reunión del consejo',
+   text:'Mañana se reúne el consejo en Madrid: 25 personas, café de bienvenida, sala con proyector y un almuerzo ligero. Te piden una propuesta en dos horas.',
+   opts:[
+    {t:'Pido presupuesto a varios espacios a la vez',r:'Comparar es lo que te da margen para negociar, pero con dos horas hay que saber a quién llamar.'},
+    {t:'Repito el espacio de siempre',r:'Seguro y rápido, aunque a veces una buena alternativa mejora precio o servicio.'},
+    {t:'Pregunto a compañeras de la profesión por recomendaciones',r:'Un contacto de confianza vale más que diez búsquedas: la experiencia de otras asistentes es oro.'}],
+   aspm:'🏢 <b>Cómo ayuda ASPM:</b> el directorio incluye espacios, eventos, catering y MICE (Calandria, Gran Vía Events, SPmice, Somos Experiences, Grupo La Muñuna, Grupo Eneldo…), y <b>Ephimera</b> ofrece una tarifa reducida del 15 % en sus espacios para reuniones. Además, los eventos y cenas de la asociación te dan <b>networking exclusivo</b> con profesionales y proveedores.'}
+];
+
+function startDay(){
+  botSay('☀️ <b>El día en la vida de una asistente.</b> Te cuento una jornada en tres escenas. En cada una decides qué harías y te enseño cómo te echa una mano ASPM.')
+    .then(()=>setTimeout(()=>dayScene(0),3500));
+}
+
+function dayScene(n){
+  const sc=DAY[n];
+  const ty=add('<div class="typing"><i></i><i></i><i></i></div>','bot');
+  setTimeout(()=>{
+    ty.remove();
+    const d=add(`<div class="day-time">⏰ ${sc.time} · Escena ${n+1} de ${DAY.length} · ${sc.title}</div><p class="g-brief">${sc.text}</p><div class="day-opts"><div class="g-note">¿Qué haces?</div></div><div class="day-out"></div>`,'bot gamemsg');
+    const box=d.querySelector('.day-opts'),out=d.querySelector('.day-out');
+    sc.opts.forEach(o=>{
+      const b=document.createElement('button');b.type='button';b.className='g-opt';b.innerHTML='<b>'+o.t+'</b>';
+      b.onclick=()=>{
+        box.querySelectorAll('.g-opt').forEach(x=>{x.disabled=true});b.classList.add('picked');
+        out.innerHTML=`<div class="day-res">${o.r}</div><div class="day-aspm">${sc.aspm}</div><div class="btn-row"><button type="button" class="btn btn-primary day-next">${n<DAY.length-1?'Siguiente escena ▶':'🌙 Terminar el día'}</button></div>`;
+        out.querySelector('.day-next').onclick=ev=>{ev.target.disabled=true;n<DAY.length-1?dayScene(n+1):dayEnd()};
+        chat.scrollTop=chat.scrollHeight;
+      };
+      box.appendChild(b);
+    });
+    chat.scrollTop=chat.scrollHeight;
+  },600);
+}
+
+function dayEnd(){
+  botSay(`🌙 <b>19:00.</b> Cierras el portátil: agenda cerrada, viaje reservado y consejo organizado. Una jornada así se lleva mucho mejor <b>en comunidad</b>: con formación, ventajas y compañeras que te entienden.<div class="btn-row"><a class="btn btn-primary" href="${FORM}">Quiero asociarme</a></div>`,['¿Qué beneficios hay?','¿Qué descuentos hay para socias?',SUG[10],SUG[9]]);
 }
 
 document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();ask(q.value)});

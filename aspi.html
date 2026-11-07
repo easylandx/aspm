@@ -293,6 +293,22 @@ footer,footer p,footer li,footer a{color:#FFF9F3;font-size:1rem}
 .g-result.ko{background:rgba(201,8,18,.07);border:1px solid rgba(201,8,18,.3)}
 .g-result ol{margin:.35rem 0 0 1.2rem}
 .g-undo{margin-top:.5rem}
+
+/* ===== Aspi · guía de visita ===== */
+body.tour-open{overflow:hidden}
+.tour-ov{position:fixed;inset:0;z-index:9999;background:#14232C}
+.tour-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.tour-guide{position:absolute;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));width:min(720px,calc(100% - 24px));display:flex;gap:.8rem;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:18px;padding:.8rem .9rem;box-shadow:0 18px 45px rgba(0,0,0,.45);color:var(--text-dark);font-size:.95rem;line-height:1.5}
+.tour-av{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--accent);background:#fff}
+.tour-main{flex:1;min-width:0}
+.tour-step{font-size:.78rem;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.04em}
+.tour-txt{margin:.2rem 0 0;min-height:2.9em}
+.tour-txt a{color:var(--accent);font-weight:700;text-decoration:underline}
+.tour-ctl{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.55rem}
+.tour-ctl .chip:disabled{opacity:.4;cursor:default}
+.tour-bar{height:4px;border-radius:99px;background:rgba(32,57,74,.12);overflow:hidden;margin-top:.6rem}
+.tour-bar i{display:block;height:100%;width:0;background:var(--accent)}
+@media(max-width:520px){.tour-av{width:48px;height:48px}.tour-guide{padding:.65rem .7rem;font-size:.9rem}}
 </style>
 
   <!-- PWA: app instalable -->
@@ -541,7 +557,7 @@ const KB=[
  a:`🔐 Los nombres de las personas de contacto, los correos y los teléfonos de cada empresa colaboradora están reunidos en el <b>Área Privada</b>, el espacio exclusivo para socias y socios, con buscador para encontrar a quien necesites en un momento. Entra aquí: ${L(PRIV,"Área Privada")}. Si todavía no eres socia, ¡te damos la bienvenida! Pide información en <a href="index.html#unete">Asóciate</a>.`,
  c:["¿Cómo me hago socia?","¿Qué hay en el Área Privada?"]},
 ];
-const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 30 segundos"];
+const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 30 segundos","🧭 Hazme el tour"];
 // ====== MOTOR ======
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ ]/g," ");
 const STOP=new Set("el la los las un una de del en y a que es son por para con me te se mi tu como cual cuales hay al lo su sus o".split(" "));
@@ -592,6 +608,7 @@ function handleSpecial(t){
     if(/^(cancelar|salir|olvidalo|dejalo|no quiero)$/.test(n)){flow=null;botSay('Sin problema, lo dejamos aquí 😊 ¿Te ayudo con algo más?',[SUG[0],SUG[1],SUG[7],SUG[8]]);return true}
     flow(t);return true;
   }
+  if(/\btour\b|visita guiada|guia de visita|recorr\w* la web/.test(n)){startTour();return true}
   if(/\btarjeta\b|\bcredencial\b/.test(n)&&!/credito|debito|visa|bancaria/.test(n)){startCard();return true}
   if(/ordena.*agenda|agenda.*directivo/.test(n)){startAgenda();return true}
   if(/(mejor|elige).*hotel.*evento/.test(n)){startHotel();return true}
@@ -806,6 +823,129 @@ function startHotel(){
       body.appendChild(b);
     });
   });
+}
+
+// ---------- ASPI · GUÍA DE VISITA ("Hazme el tour") ----------
+function startTour(){
+  botSay('🧭 <b>¡Vamos de visita!</b> Te enseño la web de arriba abajo, resaltando cada sección con un foco y contándote qué hay en ella. Puedes pausar, avanzar o salir cuando quieras.')
+    .then(()=>setTimeout(runTour,8000));
+}
+
+function tourExplain(el,title){
+  const tag=el.tagName,t=norm((el.id||'')+' '+(el.className&&el.className.baseVal===undefined?el.className:'')+' '+title+' '+(el.innerText||'').slice(0,260));
+  if(tag==='HEADER')return 'Arriba tienes el menú: Junta Directiva, Noticias, el Área Privada para socias y el botón «Asóciate».';
+  if(tag==='FOOTER')return 'Abajo del todo: la dirección de ASPM, el email de contacto, las redes sociales y el aviso legal.';
+  if(el.querySelector('form'))return 'Este es el formulario de «Solicitud de Información»: nombre, email y una breve presentación, y ASPM se pone en contacto contigo.';
+  if(/por que asociarte|beneficios|tu comunidad/.test(t))return 'Los tres grandes beneficios: comunidad y apoyo humano, networking exclusivo y formación continua.';
+  if(/patrocinador|empresas|conecta con perfiles/.test(t))return 'Para empresas: ser socio colaborador o patrocinador da visibilidad y acceso a profesionales con capacidad de decisión.';
+  if(/actualidad|noticias/.test(t))return 'Las últimas noticias y actividades de ASPM, cargadas automáticamente desde su web.';
+  if(/siguiente paso|quiero asociarme/.test(t))return 'Si ya te han convencido, este es el siguiente paso para unirte a la comunidad.';
+  if(/hoteles|cadenas|alojamiento|eventos|catering|viajes|transporte|cultura/.test(t))return 'Aquí están las marcas que colaboran con ASPM: hoteles, eventos, viajes, cultura y tecnología.';
+  if(/asociacion profesional|asociarme|bienvenid|secretariado/.test(t))return 'Esta es la portada: ASPM conecta a profesionales de la asistencia a la dirección con formación, empleo y comunidad.';
+  return title?`Esta sección es «${title}».`:'Seguimos bajando por la web…';
+}
+
+function runTour(){
+  const ov=document.createElement('div');ov.className='tour-ov';
+  ov.innerHTML='<iframe class="tour-frame" title="Web de ASPM" src="index.html"></iframe>'+
+    '<div class="tour-guide" role="dialog" aria-label="Guía de visita de Aspi" aria-live="polite"><div class="tour-main"><div class="tour-step"></div><p class="tour-txt"></p>'+
+    '<div class="tour-ctl"><button type="button" class="chip t-prev">◀ Anterior</button><button type="button" class="chip t-pause">⏸ Pausar</button><button type="button" class="chip t-next">Siguiente ▶</button><button type="button" class="chip t-exit">✕ Salir</button></div>'+
+    '<div class="tour-bar"><i></i></div></div></div>';
+  const av=document.querySelector('.chat-head .avatar img');
+  if(av){const a=av.cloneNode();a.className='tour-av';a.alt='';ov.querySelector('.tour-guide').insertBefore(a,ov.querySelector('.tour-main'))}
+  document.body.appendChild(ov);document.body.classList.add('tour-open');
+  const fr=ov.querySelector('.tour-frame'),stepEl=ov.querySelector('.tour-step'),txt=ov.querySelector('.tour-txt'),bar=ov.querySelector('.tour-bar i'),
+        bPrev=ov.querySelector('.t-prev'),bPause=ov.querySelector('.t-pause'),bNext=ov.querySelector('.t-next');
+  let steps=[],i=-1,timer=null,cdTimer=null,paused=false,spot=null,doc=null,win=null,closed=false;
+
+  function close(msg){
+    if(closed)return;closed=true;clearTimeout(timer);clearInterval(cdTimer);
+    document.removeEventListener('keydown',onKey);ov.remove();document.body.classList.remove('tour-open');
+    if(msg)botSay(msg);
+  }
+  function fail(){close(`😕 No puedo hacer la visita desde aquí (solo funciona con la web publicada). Puedes verla tú mismo/a en la <a href="${SITE}">web de ASPM</a>.`)}
+  function onKey(e){if(e.key==='Escape')exit();else if(e.key==='ArrowRight')next();else if(e.key==='ArrowLeft')prev()}
+  document.addEventListener('keydown',onKey);
+  function exit(){close(`Hasta aquí la visita 😊 Cuando quieras, aquí tienes el <a href="${FORM}">formulario de solicitud de información</a>.`)}
+
+  function build(){
+    try{doc=fr.contentDocument;win=fr.contentWindow;if(!doc||!doc.body)throw 0;doc.body.scrollHeight}catch(e){fail();return}
+    const st=doc.createElement('style');
+    st.textContent='#aspi-spot{position:absolute;z-index:2147483646;pointer-events:none;border:3px solid #FFD400;border-radius:18px;box-shadow:0 0 0 100vmax rgba(13,13,13,.64);transition:top .6s ease,left .6s ease,width .6s ease,height .6s ease}';
+    st.textContent+='.aspm-fab,.aspm-msg{display:none!important}';
+    doc.head.appendChild(st);
+    doc.documentElement.style.scrollBehavior='auto';
+    spot=doc.createElement('div');spot.id='aspi-spot';spot.style.opacity='0';doc.documentElement.appendChild(spot);
+    doc.body.style.paddingBottom='280px';
+    const cfg=[
+      {sel:['.topbar','header'],top:1,title:'Menú',say:'Arriba tienes el menú: Junta Directiva, Noticias, el Área Privada para socias y el botón «Asóciate». En la barra superior, LinkedIn, «Pregunta a Aspi» (¡yo!) y el email.'},
+      {sel:['.hero'],title:'Portada',say:'Esta es la portada, con un titular que cambia en cada visita: ASPM conecta a profesionales de la asistencia a la dirección con formación, bolsa de empleo y comunidad. Desde aquí puedes asociarte o ser socio colaborador.'},
+      {sel:['#share-wa'],title:'Compartir por WhatsApp',say:'Este botón te permite compartir la web por WhatsApp con un mensaje y una imagen ya preparados.'},
+      {sel:['#beneficios'],title:'¿Por qué asociarte?',say:'Los tres grandes beneficios de asociarte: comunidad y soporte humano, networking exclusivo y formación continua.'},
+      {sel:['#colaboradores'],title:'Empresas y patrocinadores',say:'Para empresas: ser socio colaborador o patrocinador da visibilidad y acceso a perfiles con capacidad de decisión. Desde aquí puedes pedir propuesta.'},
+      {sel:['#noticias'],title:'Noticias y actividades',say:'Las últimas noticias y actividades de ASPM, que se cargan solas desde aspm.es.'},
+      {sel:['#unete h2','#unete a[href="#solicitud-socia"]'],title:'Da el siguiente paso',say:'Aquí empieza el siguiente paso: una comunidad que lleva 40 años defendiendo la profesión. Solo tienes que pulsar «Quiero asociarme».'},
+      {sel:['#solicitud-socia'],title:'Solicitud de información',say:'Este es el formulario de «Solicitud de Información»: nombre, apellidos y email, y ASPM se pone en contacto contigo para explicarte el proceso.'},
+      {sel:['.sponsors-wrapper'],title:'Marcas colaboradoras',say:'Y estas son las marcas que colaboran con ASPM, por categorías: hoteles, espacios y eventos, viajes y transporte, cultura y servicios.'},
+      {sel:['#contacto-footer'],title:'Contacto',say:'Abajo del todo: la dirección en el Paseo de la Castellana, el email de contacto, las redes sociales y el Aviso Legal.'}
+    ];
+    steps=cfg.map(c=>{const els=c.sel.map(q=>doc.querySelector(q)).filter(Boolean);return els.length?{els,top:c.top,title:c.title,say:c.say}:null}).filter(Boolean);
+    if(steps.length<4){ // respaldo genérico si la web cambia mucho
+      const all=[...doc.querySelectorAll('header,section,footer')].filter(el=>{
+        if(el.parentElement&&el.parentElement.closest('header,section,footer'))return false;
+        if(el.closest('dialog,[role=dialog],[class*=modal],[id*=modal],[class*=legal],[id*=legal],[class*=overlay],[id*=overlay]'))return false;
+        const cs=win.getComputedStyle(el),r=el.getBoundingClientRect();
+        return cs.display!=='none'&&cs.visibility!=='hidden'&&r.height>60&&!el.id.startsWith('aspi-');
+      });
+      steps=all.map(el=>{const h=el.querySelector('h1,h2,h3'),title=h?h.textContent.replace(/\s+/g,' ').trim().slice(0,60):'';return {els:[el],title,say:tourExplain(el,title)}});
+    }
+    if(steps.length<2){fail();return}
+    const formEl=doc.querySelector('#solicitud-socia')||doc.querySelector('form');
+    steps.push({els:[formEl?(formEl.id==='solicitud-socia'?formEl:(formEl.closest('section')||formEl)):steps[steps.length-2].els[0]],title:'Solicitud de información',final:true});
+    if(win.ResizeObserver){try{new win.ResizeObserver(()=>{if(!closed&&steps[i])place(steps[i],false)}).observe(doc.body)}catch(e){}}
+    go(0);
+  }
+
+  function place(s,scroll=true){
+    if(s.top&&scroll)win.scrollTo(0,0);
+    const rs=s.els.map(e=>e.getBoundingClientRect()),sy=win.scrollY,sx=win.scrollX,vh=win.innerHeight,cw=doc.documentElement.clientWidth;
+    const L=Math.min(...rs.map(r=>r.left)),T=Math.min(...rs.map(r=>r.top)),R=Math.max(...rs.map(r=>r.right)),B=Math.max(...rs.map(r=>r.bottom));
+    const full=(R-L)>=cw-24,pad=full?0:10;
+    const left=full?6:Math.max(4,L+sx-pad),w=full?cw-12:(R-L+2*pad);
+    const top=T+sy-pad+(full?4:0),h=Math.max(40,Math.min(B-T+2*pad,vh*.62)-(full?8:0));
+    spot.style.opacity='1';
+    spot.style.top=top+'px';spot.style.left=left+'px';spot.style.width=w+'px';spot.style.height=h+'px';
+    if(scroll)win.scrollTo({top:Math.max(0,top-110),behavior:'smooth'});
+  }
+  function arm(ms){
+    clearTimeout(timer);bar.style.transition='none';bar.style.width='0%';
+    if(paused)return;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.transition='width '+ms+'ms linear';bar.style.width='100%'}));
+    timer=setTimeout(next,ms);
+  }
+  function go(n){
+    if(closed)return;clearInterval(cdTimer);
+    i=Math.max(0,Math.min(n,steps.length-1));const s=steps[i];
+    stepEl.textContent=`Paso ${i+1} de ${steps.length}`+(s.title?` · ${s.title}`:'');
+    bPrev.disabled=i===0;
+    place(s);
+    if(s.final){
+      bNext.style.display='none';bPause.style.display='none';bar.style.width='0%';clearTimeout(timer);
+      let c=10;
+      txt.innerHTML=`🎉 ¡Eso es todo! Ahora te llevo al <b>formulario de solicitud de información</b> en <b class="cd">${c}</b>… <a href="${FORM}">Ir ahora</a>`;
+      cdTimer=setInterval(()=>{c--;if(c<=0){clearInterval(cdTimer);location.href=FORM}else txt.querySelector('.cd').textContent=c},1000);
+    }else{
+      bNext.style.display='';bPause.style.display='';
+      txt.textContent=s.say;
+      arm(3500+s.say.length*45);
+    }
+  }
+  function next(){if(i<steps.length-1)go(i+1)}
+  function prev(){if(i>0)go(i-1)}
+  bNext.onclick=next;bPrev.onclick=prev;ov.querySelector('.t-exit').onclick=exit;
+  bPause.onclick=()=>{paused=!paused;bPause.textContent=paused?'▶ Seguir':'⏸ Pausar';if(paused){clearTimeout(timer);bar.style.transition='none'}else go(i)};
+  fr.addEventListener('load',()=>setTimeout(build,700));
+  setTimeout(()=>{if(!closed&&!steps.length){try{if(!fr.contentDocument)fail()}catch(e){fail()}}},8000);
 }
 
 document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();ask(q.value)});

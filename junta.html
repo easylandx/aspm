@@ -718,6 +718,22 @@ header .btn-outline:hover{background:#203746;color:#FFF9F3}
       }
       .topbar-actions a { max-width: 100%; overflow-wrap: anywhere; }
     }
+  
+    /* Formulario de solicitud: idéntico al de la página principal */
+    .membership-form h3 { letter-spacing: -.035em; }
+    .membership-form {
+      background: rgba(255,249,243,.88);
+      border-color: #D9C9BD;
+      box-shadow: 0 10px 30px -8px rgba(32,55,70,.08);
+    }
+    .form-field input, .form-field textarea { background: #FFF9F3; }
+    .form-field input:focus, .form-field textarea:focus {
+      border-color: #C9000A;
+      box-shadow: 0 0 0 3px rgba(201,0,10,.12);
+    }
+    .form-check input { accent-color: #C9000A; }
+    .form-check { cursor: pointer; }
+    .membership-form .form-submit { padding: 0.95rem 1.7rem; font-size: 1rem; min-height: 50px; }
   </style>
 
   <!-- PWA: app instalable -->
@@ -1016,49 +1032,71 @@ header .btn-outline:hover{background:#203746;color:#FFF9F3}
   <!-- Sección Pilares / Valores -->
   
 
-  <!-- Formulario de Contacto / Solicitud -->
-  <section id="contacto">
-    <div class="container">
-      <div class="section-header">
-        <span class="tag">Contacto & Solicitudes</span>
-        <h2>Únete o Contacta con ASPM</h2>
-        <p>Completa el siguiente formulario para solicitar tu incorporación o solicitar información sobre la asociación.</p>
+  <!-- Formulario de Contacto / Solicitud (igual que index) -->
+  <section id="contacto" style="text-align: center;">
+    <div class="container" style="max-width: 800px;">
+      <h2 style="font-size: 2.2rem; color: var(--primary); margin-bottom: 0.4rem;">Da el siguiente paso</h2>
+      <h3 style="font-size: 1.25rem; color: var(--accent); font-weight: 700; margin-bottom: 1rem;">Forma parte de la comunidad ASPM.</h3>
+      <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem;">Únete a una comunidad que lleva 40 años defendiendo la profesión y sigue reinventándose contigo.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="#solicitud-socia" class="btn btn-primary">Quiero asociarme</a>
       </div>
 
-      <div class="membership-form">
+      <!-- Formulario único de solicitud de socia + newsletter mensual -->
+      <div id="solicitud-socia" class="membership-form">
         <h3>Solicitud de Información</h3>
-        <p class="form-intro">Responderemos a tu solicitud en la mayor brevedad posible.</p>
-        <form id="form-contacto" action="https://formsubmit.co/secretaria@aspm.es" method="POST" novalidate>
+        <p class="form-intro">
+          Completa tus datos y nos ponemos en contacto contigo para informarte sobre el proceso de incorporación a ASPM.
+        </p>
+
+        <form id="form-solicitud" action="https://formsubmit.co/secretaria@aspm.es" method="POST" novalidate>
           <!-- Anti-spam (campo oculto): los bots lo rellenan, las personas no -->
           <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;" aria-hidden="true">
           <div class="form-grid">
             <div class="form-field">
-              <label for="nombre">Nombre completo</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre y apellidos" required>
+              <label for="nombre">Nombre *</label>
+              <input type="text" id="nombre" name="nombre" autocomplete="given-name" required>
             </div>
+
             <div class="form-field">
-              <label for="email">Correo electrónico</label>
-              <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+              <label for="apellidos">Apellidos *</label>
+              <input type="text" id="apellidos" name="apellidos" autocomplete="family-name" required>
             </div>
+
+            <div class="form-field">
+              <label for="email">Correo Electrónico *</label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+
             <div class="form-field">
               <label for="telefono">Teléfono</label>
-              <input type="tel" id="telefono" name="telefono" placeholder="+34 600 000 000">
+              <input type="tel" id="telefono" name="telefono" autocomplete="tel">
             </div>
-            <div class="form-field">
-              <label for="empresa">Empresa / Cargo</label>
-              <input type="text" id="empresa" name="empresa" placeholder="Ej. Asistente de Dirección">
-            </div>
+
             <div class="form-field full">
-              <label for="mensaje">Mensaje o consulta</label>
-              <textarea id="mensaje" name="mensaje" placeholder="¿En qué podemos ayudarte o qué información necesitas?"></textarea>
+              <label for="empresa">Empresa / Organización</label>
+              <input type="text" id="empresa" name="empresa" autocomplete="organization">
+            </div>
+
+            <div class="form-field full">
+              <label for="mensaje">Mensaje o Comentarios</label>
+              <textarea id="mensaje" name="mensaje"></textarea>
             </div>
           </div>
-          <div class="form-check">
-            <input type="checkbox" id="privacy" required>
-            <label for="privacy">Acepto la política de privacidad y el tratamiento de mis datos para responder a la consulta.</label>
-          </div>
+
+          <label class="form-check">
+            <input type="checkbox" name="newsletter" value="si">
+            <span>Quiero recibir también el <strong>newsletter mensual de ASPM.</strong></span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="privacidad" name="privacidad" value="si" required>
+            <span>Acepto la política de privacidad y el tratamiento de mis datos para la solicitud de información / gestión de mi suscripción al newsletter. *</span>
+          </label>
+
           <button type="submit" class="btn btn-primary form-submit">Enviar solicitud de información</button>
           <p id="form-status" role="status" aria-live="polite" style="display:none;margin-top:1rem;padding:0.85rem 1rem;border-radius:10px;font-size:0.95rem;text-align:center;"></p>
+
         </form>
       </div>
     </div>
@@ -1114,9 +1152,9 @@ header .btn-outline:hover{background:#203746;color:#FFF9F3}
 
 
   <script>
-    // Envío del formulario de contacto/solicitud por email a secretaria@aspm.es
+    // Envío del formulario "Solicitud de Información" por email a secretaria@aspm.es
     (function () {
-      var form = document.getElementById('form-contacto');
+      var form = document.getElementById('form-solicitud');
       if (!form) return;
       var status = document.getElementById('form-status');
       var btn = form.querySelector('button[type="submit"]');
@@ -1129,23 +1167,29 @@ header .btn-outline:hover{background:#203746;color:#FFF9F3}
         status.textContent = msg;
       }
 
+      form.elements['privacidad'].addEventListener('change', function () { this.setCustomValidity(''); });
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        var priv = form.elements['privacidad'];
+        priv.setCustomValidity(priv.checked ? '' : 'Debes aceptar la política de privacidad para enviar la solicitud.');
         if (!form.checkValidity()) { form.reportValidity(); return; }
         if (form.elements['_honey'].value) return; // bot
 
         var f = form.elements;
         var datos = {
-          'Nombre completo': f['nombre'].value.trim(),
+          'Nombre': f['nombre'].value.trim(),
+          'Apellidos': f['apellidos'].value.trim(),
           'Email': f['email'].value.trim(),
           'Teléfono': f['telefono'].value.trim() || '—',
-          'Empresa / Cargo': f['empresa'].value.trim() || '—',
-          'Mensaje': f['mensaje'].value.trim() || '—',
-          'Política de privacidad aceptada': 'Sí'
+          'Empresa / Organización': f['empresa'].value.trim() || '—',
+          'Sobre la persona': f['mensaje'].value.trim() || '—',
+          'Newsletter mensual': f['newsletter'].checked ? 'Sí' : 'No',
+          'Política de privacidad aceptada': f['privacidad'].checked ? 'Sí' : 'No'
         };
 
         var payload = Object.assign({}, datos, {
-          _subject: 'Nueva solicitud desde la web de ASPM: ' + datos['Nombre completo'],
+          _subject: 'Nueva solicitud de información: ' + datos['Nombre'] + ' ' + datos['Apellidos'],
           _replyto: datos['Email'],
           _template: 'table',
           _captcha: 'false'
@@ -1164,7 +1208,7 @@ header .btn-outline:hover{background:#203746;color:#FFF9F3}
         .then(function (res) {
           if (res.ok && String(res.j.success) === 'true') {
             form.reset();
-            show('¡Gracias! Hemos recibido tu mensaje y nos pondremos en contacto contigo muy pronto.', true);
+            show('¡Gracias! Hemos recibido tu solicitud y nos pondremos en contacto contigo muy pronto.', true);
           } else {
             throw new Error('envio_fallido');
           }
@@ -1173,9 +1217,9 @@ header .btn-outline:hover{background:#203746;color:#FFF9F3}
           // Plan B: abrir el correo del usuario con los datos ya escritos
           var cuerpo = Object.keys(datos).map(function (k) { return k + ': ' + datos[k]; }).join('\n');
           window.location.href = 'mailto:' + DESTINO +
-            '?subject=' + encodeURIComponent('Solicitud desde la web de ASPM') +
+            '?subject=' + encodeURIComponent('Solicitud de Información') +
             '&body=' + encodeURIComponent(cuerpo);
-          show('No hemos podido enviar el formulario automáticamente. Se ha abierto tu programa de correo para que puedas enviarnos el mensaje desde ahí.', false);
+          show('No hemos podido enviar el formulario automáticamente. Se ha abierto tu programa de correo para que puedas enviarnos la solicitud desde ahí.', false);
         })
         .finally(function () {
           btn.disabled = false;

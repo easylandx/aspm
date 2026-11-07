@@ -557,7 +557,7 @@ const KB=[
  a:`🔐 Los nombres de las personas de contacto, los correos y los teléfonos de cada empresa colaboradora están reunidos en el <b>Área Privada</b>, el espacio exclusivo para socias y socios, con buscador para encontrar a quien necesites en un momento. Entra aquí: ${L(PRIV,"Área Privada")}. Si todavía no eres socia, ¡te damos la bienvenida! Pide información en <a href="index.html#unete">Asóciate</a>.`,
  c:["¿Cómo me hago socia?","¿Qué hay en el Área Privada?"]},
 ];
-const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 30 segundos","🧭 Hazme el tour"];
+const SUG=["¿Qué es ASPM?","¿Cómo me hago socia?","¿Qué beneficios hay?","¿Qué descuentos hay para socias?","¿Cómo funciona la bolsa de empleo?","¿Quiénes son los patrocinadores?","¿Cómo contacto?","🪪 Crea tu tarjeta de socia","⏱️ Reto de 60 segundos","🧭 Hazme el tour"];
 // ====== MOTOR ======
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ ]/g," ");
 const STOP=new Set("el la los las un una de del en y a que es son por para con me te se mi tu como cual cuales hay al lo su sus o".split(" "));
@@ -612,7 +612,7 @@ function handleSpecial(t){
   if(/\btarjeta\b|\bcredencial\b/.test(n)&&!/credito|debito|visa|bancaria/.test(n)){startCard();return true}
   if(/ordena.*agenda|agenda.*directivo/.test(n)){startAgenda();return true}
   if(/(mejor|elige).*hotel.*evento/.test(n)){startHotel();return true}
-  if(/\bretos?\b|mini ?juegos?|\bjuegos?\b|jugar|30 segundos/.test(n)){startChallenge();return true}
+  if(/\bretos?\b|mini ?juegos?|\bjuegos?\b|jugar|60 segundos/.test(n)){startChallenge();return true}
   return false;
 }
 
@@ -721,22 +721,22 @@ function shareCard(blob,note){
 
 // ---------- RETOS DE 30 SEGUNDOS ----------
 function startChallenge(){
-  botSay('⏱️ <b>¡Reto de 30 segundos!</b> Elige un mini-juego profesional. Si lo ganas, te llevo al <b>formulario de solicitud de información</b> de ASPM 🏆',['📅 Ordena la agenda del directivo','🏨 Elige el mejor hotel para el evento']);
+  botSay('⏱️ <b>¡Reto de 60 segundos!</b> Elige un mini-juego profesional. Si lo ganas, te llevo al <b>formulario de solicitud de información</b> de ASPM 🏆',['📅 Ordena la agenda del directivo','🏨 Elige el mejor hotel para el evento']);
 }
 
 function timerFor(d,onTimeout){
   const bar=d.querySelector('.g-bar i'),tm=d.querySelector('.g-time'),t0=Date.now();let done=false;
   const iv=setInterval(()=>{
     if(done||!d.isConnected){clearInterval(iv);return}
-    const left=Math.max(0,30000-(Date.now()-t0));
-    bar.style.width=(left/300)+'%';tm.textContent=Math.ceil(left/1000)+' s';
+    const left=Math.max(0,60000-(Date.now()-t0));
+    bar.style.width=(left/600)+'%';tm.textContent=Math.ceil(left/1000)+' s';
     if(left<=0){done=true;clearInterval(iv);onTimeout()}
   },100);
   return {stop(){done=true;clearInterval(iv)},secs:()=>((Date.now()-t0)/1000).toFixed(1)};
 }
 
 function gameShell(title,intro,onStart){
-  const d=add(`<div class="g-top"><b>${title}</b><span class="g-time">30 s</span></div><div class="g-bar"><i></i></div><p class="g-brief">${intro}</p><div class="g-body"><button type="button" class="btn btn-primary g-start">▶ Empezar (30 s)</button></div><div class="g-foot"></div>`,'bot gamemsg');
+  const d=add(`<div class="g-top"><b>${title}</b><span class="g-time">60 s</span></div><div class="g-bar"><i></i></div><p class="g-brief">${intro}</p><div class="g-body"><button type="button" class="btn btn-primary g-start">▶ Empezar (60 s)</button></div><div class="g-foot"></div>`,'bot gamemsg');
   d.querySelector('.g-start').onclick=()=>{d.querySelector('.g-body').innerHTML='';onStart(d.querySelector('.g-body'),d);chat.scrollTop=chat.scrollHeight};
   return d;
 }
